@@ -1,0 +1,10 @@
+{
+    "alunos": [
+      { "id": 1, "nome": "Carla", "apelido": "Silva", "curso": "Informática", "anoCurricular": 2 },
+      { "id": 2, "nome": "Carlos", "apelido": "Santos", "curso": "Gestão", "anoCurricular": 3 }
+    ],
+    "cursos": [
+      { "id": 1, "nomeDoCurso": "Informática" },
+      { "id": 2, "nomeDoCurso": "Gestão" }
+    ]
+  }
