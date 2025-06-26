@@ -1,4 +1,4 @@
-const API = 'http://localhost:3001/alunos';
+const API = 'https://trab1-restapi-martimd11-louv.onrender.com/alunos';
 
 async function carregarAlunos() {
   const resposta = await fetch(API);
