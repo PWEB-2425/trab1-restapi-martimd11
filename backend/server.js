@@ -25,5 +25,4 @@ app.get('/alunos', async (req, res) => {
   res.json(alunos);
 });
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`🚀 API pronta em http://localhost:${PORT}`));
+const API = 'https://trab1-restapi-martimd11-louv.onrender.com/alunos';
