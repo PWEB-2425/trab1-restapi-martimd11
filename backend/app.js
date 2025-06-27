@@ -3,7 +3,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 
-//porta padrão
+// Teste simples na raiz
+app.get("/", (req, res) => {
+  res.send("API está a funcionar ✅");
+});
+
+// Porta padrão
 const PORT = process.env.PORT || 3000;
 
 // Conectar ao MongoDB
