@@ -11,5 +11,5 @@ app.use("/api", alunoRoutes);
 
 mongoose.connect(process.env.MONGODB_URI).then(() => {
   console.log("Conectado ao MongoDB");
-  app.listen(5000, () => console.log("API na porta 5000"));
+  app.listen(3000, () => console.log("API na porta 3000"));
 });
