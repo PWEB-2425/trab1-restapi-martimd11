@@ -1,4 +1,4 @@
-const baseURL = "https://teu-api.onrender.com/api"; // <-- Muda para o teu link do Render
+const API = "https://trab1-restapi-martimd11-t4qs.onrender.com/alunos";
 
 // Carregar alunos ao abrir a página
 document.addEventListener("DOMContentLoaded", carregarAlunos);
