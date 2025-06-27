@@ -1,10 +1,23 @@
 {
-    "alunos": [
-      { "id": 1, "nome": "Carla", "apelido": "Silva", "curso": "Informática", "anoCurricular": 2 },
-      { "id": 2, "nome": "Carlos", "apelido": "Santos", "curso": "Gestão", "anoCurricular": 3 }
-    ],
-    "cursos": [
-      { "id": 1, "nomeDoCurso": "Informática" },
-      { "id": 2, "nomeDoCurso": "Gestão" }
-    ]
-  }
+  "alunos": [
+    {
+      "id": 1,
+      "nome": "João",
+      "apelido": "Silva",
+      "curso": "Informática",
+      "anoCurricular": 2
+    },
+    {
+      "id": 2,
+      "nome": "Maria",
+      "apelido": "Oliveira",
+      "curso": "Design",
+      "anoCurricular": 1
+    }
+  ],
+  "cursos": [
+    { "id": 1, "nomeDoCurso": "Informática" },
+    { "id": 2, "nomeDoCurso": "Design" },
+    { "id": 3, "nomeDoCurso": "Multimédia" }
+  ]
+}
