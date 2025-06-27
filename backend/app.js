@@ -1,15 +1,19 @@
-require("dotenv").config();
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const alunoRoutes = require("./routes/alunoRoutes");
-
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
 const app = express();
-app.use(cors());
-app.use(express.json());
-app.use("/api", alunoRoutes);
 
-mongoose.connect(process.env.MONGODB_URI).then(() => {
-  console.log("Conectado ao MongoDB");
-  app.listen(3000, () => console.log("API na porta 3000"));
-});
+//porta padrão
+const PORT = process.env.PORT || 3000;
+
+// Conectar ao MongoDB
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log("Conectado ao MongoDB");
+    app.listen(PORT, () => {
+      console.log(`API na porta ${PORT}`);
+    });
+  })
+  .catch(err => {
+    console.error("Erro ao conectar ao MongoDB:", err);
+  });
