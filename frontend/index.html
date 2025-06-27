@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>Gestão de Alunos</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    li { margin-bottom: 10px; }
+    button { margin-left: 10px; }
+  </style>
 </head>
 <body>
   <h1>Alunos</h1>
@@ -18,7 +23,7 @@
   </form>
 
   <script>
-    const API = "http://localhost:3000/alunos";
+    const API = "https://teu-backend.onrender.com/api/alunos"; // ← MUDA ESTE LINK se necessário
 
     async function carregarAlunos() {
       const res = await fetch(API);
@@ -27,7 +32,13 @@
       lista.innerHTML = "";
       alunos.forEach(aluno => {
         const li = document.createElement("li");
-        li.textContent = `${aluno.nome} ${aluno.apelido} - ${aluno.curso}`;
+        li.textContent = `${aluno.nome} ${aluno.apelido} - ${aluno.curso} (${aluno.anoCurricular}º ano)`;
+
+        const btnApagar = document.createElement("button");
+        btnApagar.textContent = "Apagar";
+        btnApagar.onclick = () => apagarAluno(aluno._id);
+
+        li.appendChild(btnApagar);
         lista.appendChild(li);
       });
     }
@@ -45,8 +56,14 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(aluno)
       });
+      e.target.reset();
       carregarAlunos();
     });
+
+    async function apagarAluno(id) {
+      await fetch(`${API}/${id}`, { method: "DELETE" });
+      carregarAlunos();
+    }
 
     carregarAlunos();
   </script>
