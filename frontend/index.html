@@ -1,38 +1,53 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <title>Lista de Alunos</title>
+  <meta charset="UTF-8">
+  <title>Gestão de Alunos</title>
 </head>
 <body>
-  <h1>Lista de Alunos</h1>
-  <ul id="aluno-lista"></ul>
+  <h1>Alunos</h1>
+  <ul id="lista-alunos"></ul>
+
+  <h2>Adicionar Aluno</h2>
+  <form id="form-aluno">
+    <input id="nome" placeholder="Nome" required />
+    <input id="apelido" placeholder="Apelido" required />
+    <input id="curso" placeholder="Curso" required />
+    <input id="ano" type="number" placeholder="Ano Curricular" required />
+    <button type="submit">Guardar</button>
+  </form>
 
   <script>
-    const API = 'https://trab1-restapi-martimd11-louv.onrender.com/alunos';
+    const API = "http://localhost:3000/alunos";
 
     async function carregarAlunos() {
-      try {
-        const resposta = await fetch(API);
-        const alunos = await resposta.json();
-
-        const lista = document.getElementById('aluno-lista');
-        lista.innerHTML = '';
-
-        alunos.forEach(aluno => {
-          const item = document.createElement('li');
-          item.textContent = `${aluno.nome} ${aluno.apelido} - ${aluno.curso} (${aluno.anoCurricular}º ano)`;
-          lista.appendChild(item);
-        });
-      } catch (erro) {
-        console.error('Erro ao carregar alunos:', erro);
-      }
+      const res = await fetch(API);
+      const alunos = await res.json();
+      const lista = document.getElementById("lista-alunos");
+      lista.innerHTML = "";
+      alunos.forEach(aluno => {
+        const li = document.createElement("li");
+        li.textContent = `${aluno.nome} ${aluno.apelido} - ${aluno.curso}`;
+        lista.appendChild(li);
+      });
     }
 
-    carregarAlunos();
-  </script>
-</body>
-</html>
+    document.getElementById("form-aluno").addEventListener("submit", async e => {
+      e.preventDefault();
+      const aluno = {
+        nome: nome.value,
+        apelido: apelido.value,
+        curso: curso.value,
+        anoCurricular: Number(ano.value)
+      };
+      await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(aluno)
+      });
+      carregarAlunos();
+    });
+
     carregarAlunos();
   </script>
 </body>
