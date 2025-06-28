@@ -1,4 +1,4 @@
-const baseURL = "https://trab1-restapi-martimd11-t4qs.onrender.com"; // URL da API real
+const baseURL = "https://trab1-restapi-martimd11-t4qs.onrender.com/api"; // URL da API real
 
 let alunoIdEditando = null;
 
