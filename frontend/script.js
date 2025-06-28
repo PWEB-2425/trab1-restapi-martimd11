@@ -1,85 +1,96 @@
-const baseURL = "https://trab1-restapi-martimd11-t4qs.onrender.com/api"; // URL da API real
-
+const baseURL = "https://trab1-restapi-martimd11-t4qs.onrender.com"; // ATUALIZE COM SUA URL DO RENDER
 let alunoIdEditando = null;
 
-// Carregar alunos ao abrir a página
-document.addEventListener("DOMContentLoaded", carregarAlunos);
-
-// Função para carregar os alunos
-function carregarAlunos() {
-  fetch(`${baseURL}/alunos`)
-    .then(res => res.json())
-    .then(data => {
-      const lista = document.getElementById("lista-alunos");
-      lista.innerHTML = "";  // Limpar a lista de alunos
-
-      // Criar um item de lista para cada aluno
-      data.forEach(aluno => {
-        const li = document.createElement("li");
-        li.textContent = `${aluno.nome} ${aluno.apelido} - ${aluno.curso} (${aluno.anoCurricular}º ano)`;
-
-        // Botão para editar
-        const btnEditar = document.createElement("button");
-        btnEditar.textContent = "Editar";
-        btnEditar.onclick = () => editarAluno(aluno);
-
-        // Botão para apagar
-        const btnApagar = document.createElement("button");
-        btnApagar.textContent = "Apagar";
-        btnApagar.onclick = () => apagarAluno(aluno._id);
-
-        li.appendChild(btnEditar);
-        li.appendChild(btnApagar);
-        lista.appendChild(li);
-      });
-    })
-    .catch(err => console.error('Erro ao carregar alunos: ', err));
+// Carregar alunos
+async function carregarAlunos() {
+  try {
+    const response = await fetch(baseURL);
+    if (!response.ok) throw new Error('Erro ao carregar');
+    const alunos = await response.json();
+    
+    const lista = document.getElementById('lista-alunos');
+    lista.innerHTML = '';
+    
+    alunos.forEach(aluno => {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        ${aluno.nome} ${aluno.apelido} - ${aluno.curso} (${aluno.anoCurricular}º ano)
+        <button onclick="editarAluno('${aluno._id}')">Editar</button>
+        <button onclick="apagarAluno('${aluno._id}')">Apagar</button>
+      `;
+      lista.appendChild(li);
+    });
+  } catch (error) {
+    console.error('Erro:', error);
+    alert('Erro ao carregar alunos');
+  }
 }
 
-// Função para editar um aluno
-function editarAluno(aluno) {
-  alunoIdEditando = aluno._id;
-  document.getElementById("nome").value = aluno.nome;
-  document.getElementById("apelido").value = aluno.apelido;
-  document.getElementById("curso").value = aluno.curso;
-  document.getElementById("ano").value = aluno.anoCurricular;
+// Editar aluno
+async function editarAluno(id) {
+  try {
+    const response = await fetch(`${baseURL}/${id}`);
+    if (!response.ok) throw new Error('Erro ao buscar aluno');
+    const aluno = await response.json();
+    
+    alunoIdEditando = id;
+    document.getElementById('nome').value = aluno.nome;
+    document.getElementById('apelido').value = aluno.apelido;
+    document.getElementById('curso').value = aluno.curso;
+    document.getElementById('ano').value = aluno.anoCurricular;
+  } catch (error) {
+    console.error('Erro:', error);
+  }
 }
 
-// Função para adicionar ou editar aluno
-document.getElementById("form-aluno").addEventListener("submit", async e => {
+// Apagar aluno
+async function apagarAluno(id) {
+  if (!confirm('Tem certeza?')) return;
+  try {
+    const response = await fetch(`${baseURL}/${id}`, { method: 'DELETE' });
+    if (!response.ok) throw new Error('Erro ao apagar');
+    carregarAlunos();
+  } catch (error) {
+    console.error('Erro:', error);
+  }
+}
+
+// Formulário
+document.getElementById('form-aluno').addEventListener('submit', async (e) => {
   e.preventDefault();
-
+  
   const aluno = {
-    nome: nome.value,
-    apelido: apelido.value,
-    curso: curso.value,
-    anoCurricular: Number(ano.value)
+    nome: document.getElementById('nome').value,
+    apelido: document.getElementById('apelido').value,
+    curso: document.getElementById('curso').value,
+    anoCurricular: parseInt(document.getElementById('ano').value)
   };
 
-  if (alunoIdEditando) {
-    // Editar aluno
-    await fetch(`${baseURL}/alunos/${alunoIdEditando}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(aluno)
-    });
-    alunoIdEditando = null; // Limpar a variável após editar
-  } else {
-    // Adicionar um novo aluno
-    await fetch(`${baseURL}/alunos`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(aluno)
-    });
+  try {
+    if (alunoIdEditando) {
+      // Atualizar
+      await fetch(`${baseURL}/${alunoIdEditando}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(aluno)
+      });
+      alunoIdEditando = null;
+    } else {
+      // Criar novo
+      await fetch(baseURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(aluno)
+      });
+    }
+    
+    document.getElementById('form-aluno').reset();
+    await carregarAlunos();
+  } catch (error) {
+    console.error('Erro:', error);
+    alert('Erro ao salvar');
   }
-
-  // Resetar o formulário e recarregar a lista
-  e.target.reset();
-  carregarAlunos();
 });
 
-// Função para apagar um aluno
-async function apagarAluno(id) {
-  await fetch(`${baseURL}/alunos/${id}`, { method: "DELETE" });
-  carregarAlunos(); // Recarregar a lista após apagar
-}
+// Iniciar
+document.addEventListener('DOMContentLoaded', carregarAlunos);
