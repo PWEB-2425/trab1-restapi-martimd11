@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
 });
 
 // Usar as rotas definidas em routes/alunoroutes.js
-const alunoRoutes = require('./routes/alunoroutes');
+const alunoRoutes = require('./routes/alunoRoutes');
 app.use("/", alunoRoutes);
 
 // Iniciar o servidor
