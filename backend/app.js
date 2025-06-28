@@ -24,7 +24,7 @@ app.use('/', (req, res, next) => {
   next();
 });
 
-app.use('/api', alunoRoutes);
+app.use('/api/alunos', alunoRoutes);
 
 // Página raiz
 app.get('/', (req, res) => {
