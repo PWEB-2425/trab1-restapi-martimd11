@@ -1,11 +1,11 @@
-const baseURL = "https://trab1-restapi-martimd11-t4qs.onrender.com"; // ATUALIZE COM SUA URL DO RENDER
+const baseURL = "https://seu-backend.onrender.com/api/alunos"; // ATUALIZE COM SUA URL
 let alunoIdEditando = null;
 
-// Carregar alunos
+// Função aprimorada para carregar alunos
 async function carregarAlunos() {
   try {
     const response = await fetch(baseURL);
-    if (!response.ok) throw new Error('Erro ao carregar');
+    if (!response.ok) throw new Error('Erro ao carregar alunos');
     const alunos = await response.json();
     
     const lista = document.getElementById('lista-alunos');
@@ -14,52 +14,58 @@ async function carregarAlunos() {
     alunos.forEach(aluno => {
       const li = document.createElement('li');
       li.innerHTML = `
-        ${aluno.nome} ${aluno.apelido} - ${aluno.curso} (${aluno.anoCurricular}º ano)
-        <button onclick="editarAluno('${aluno._id}')">Editar</button>
-        <button onclick="apagarAluno('${aluno._id}')">Apagar</button>
+        <span class="aluno-info">
+          ${aluno.nome} ${aluno.apelido} - ${aluno.curso} (${aluno.anoCurricular}º ano)
+        </span>
+        <button class="btn-editar" onclick="editarAluno('${aluno._id}')">✏️ Editar</button>
+        <button class="btn-apagar" onclick="apagarAluno('${aluno._id}')">🗑️ Apagar</button>
       `;
       lista.appendChild(li);
     });
   } catch (error) {
     console.error('Erro:', error);
-    alert('Erro ao carregar alunos');
+    alert('Falha ao carregar alunos. Verifique o console.');
   }
 }
 
-// Editar aluno
-async function editarAluno(id) {
+// Função para editar aluno
+window.editarAluno = async function(id) {
   try {
     const response = await fetch(`${baseURL}/${id}`);
     if (!response.ok) throw new Error('Erro ao buscar aluno');
-    const aluno = await response.json();
     
+    const aluno = await response.json();
     alunoIdEditando = id;
+    
     document.getElementById('nome').value = aluno.nome;
     document.getElementById('apelido').value = aluno.apelido;
     document.getElementById('curso').value = aluno.curso;
     document.getElementById('ano').value = aluno.anoCurricular;
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (error) {
-    console.error('Erro:', error);
+    console.error('Erro ao editar:', error);
   }
-}
+};
 
-// Apagar aluno
-async function apagarAluno(id) {
-  if (!confirm('Tem certeza?')) return;
+// Função para apagar aluno
+window.apagarAluno = async function(id) {
+  if (!confirm('Tem certeza que deseja apagar este aluno?')) return;
+  
   try {
     const response = await fetch(`${baseURL}/${id}`, { method: 'DELETE' });
     if (!response.ok) throw new Error('Erro ao apagar');
-    carregarAlunos();
+    await carregarAlunos();
   } catch (error) {
-    console.error('Erro:', error);
+    console.error('Erro ao apagar:', error);
   }
-}
+};
 
-// Formulário
+// Formulário de submit
 document.getElementById('form-aluno').addEventListener('submit', async (e) => {
   e.preventDefault();
   
-  const aluno = {
+  const alunoData = {
     nome: document.getElementById('nome').value,
     apelido: document.getElementById('apelido').value,
     curso: document.getElementById('curso').value,
@@ -68,29 +74,31 @@ document.getElementById('form-aluno').addEventListener('submit', async (e) => {
 
   try {
     if (alunoIdEditando) {
-      // Atualizar
-      await fetch(`${baseURL}/${alunoIdEditando}`, {
+      // Atualização
+      const response = await fetch(`${baseURL}/${alunoIdEditando}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(aluno)
+        body: JSON.stringify(alunoData)
       });
+      if (!response.ok) throw new Error('Erro ao atualizar');
       alunoIdEditando = null;
     } else {
-      // Criar novo
-      await fetch(baseURL, {
+      // Criação
+      const response = await fetch(baseURL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(aluno)
+        body: JSON.stringify(alunoData)
       });
+      if (!response.ok) throw new Error('Erro ao criar');
     }
     
     document.getElementById('form-aluno').reset();
     await carregarAlunos();
   } catch (error) {
-    console.error('Erro:', error);
-    alert('Erro ao salvar');
+    console.error('Erro no formulário:', error);
+    alert('Operação falhou! Verifique o console.');
   }
 });
 
-// Iniciar
+// Inicialização
 document.addEventListener('DOMContentLoaded', carregarAlunos);
