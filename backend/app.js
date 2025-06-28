@@ -6,39 +6,25 @@ const alunoRoutes = require('./routes/alunoRoutes');
 
 const app = express();
 
-// Middleware
+// Conexão MongoDB (Render)
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fallbackdb')
+  .then(() => console.log('✅ Conectado ao MongoDB'))
+  .catch(err => console.error('❌ Erro MongoDB:', err));
+
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// Conexão MongoDB
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('✅ Conectado ao MongoDB'))
-  .catch(err => {
-    console.error('❌ Erro ao conectar ao MongoDB:', err.message);
-    process.exit(1); // Encerra se falhar
-  });
-
 // Rotas
-app.use('/', (req, res, next) => {
-  console.log(`📥 [${req.method}] ${req.originalUrl}`);
-  next();
-});
-
 app.use('/api/alunos', alunoRoutes);
 
-// Página raiz
+// Rota de teste
 app.get('/', (req, res) => {
-  res.send('✅ API funcional. Use o endpoint /alunos');
+  res.json({ status: 'API Funcional', instrucao: 'Use /api/alunos' });
 });
 
-// Middleware de erro (catch-all)
-app.use((err, req, res, next) => {
-  console.error('🔥 Erro inesperado:', err.stack);
-  res.status(500).json({ erro: 'Erro interno no servidor' });
-});
-
-// Porta
+// Porta do Render
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 API a correr em http://localhost:${PORT}`);
+  console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
