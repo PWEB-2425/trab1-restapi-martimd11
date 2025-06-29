@@ -12,7 +12,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fallbackd
 
 // Permitir CORS só para o frontend específico
 app.use(cors({
-  origin: 'https://trab1-restapi-martimd11-ezktrsbpn-martims-projects-c6b29c77.vercel.app'
+  origin: 'https://trab1-restapi-martimd11-martims-projects-c6b29c77.vercel.app/'
 }));
 
 app.use(express.json());
