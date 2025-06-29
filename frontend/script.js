@@ -1,4 +1,4 @@
-const API_URL = 'https://trab1-restapi-martimd11-t4qs.onrender.comapi/alunos';
+const API_URL = 'https://trab1-restapi-martimd11-t4qs.onrender.com/api/alunos';
 
 let alunos = [];
 let alunoAtualId = null;
