@@ -6,24 +6,22 @@ const alunoRoutes = require('./routes/alunoRoutes');
 
 const app = express();
 
-// Conexão MongoDB (Render)
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fallbackdb')
   .then(() => console.log('✅ Conectado ao MongoDB'))
   .catch(err => console.error('❌ Erro MongoDB:', err));
 
-// Middlewares
-app.use(cors());
-app.use(express.json());
+// Permitir CORS só para o frontend específico
+app.use(cors({
+  origin: 'https://trab1-restapi-martimd11-ezktrsbpn-martims-projects-c6b29c77.vercel.app'
+}));
 
-// Rotas
+app.use(express.json());
 app.use('/api/alunos', alunoRoutes);
 
-// Rota de teste
 app.get('/', (req, res) => {
   res.json({ status: 'API Funcional', instrucao: 'Use /api/alunos' });
 });
 
-// Porta do Render
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
