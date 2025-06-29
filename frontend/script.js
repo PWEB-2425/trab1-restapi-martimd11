@@ -1,61 +1,41 @@
-const API_URL = "https://trab1-restapi-martimd11.onrender.com/api";
+const API_URL = 'https://trab1-restapi-martimd11.vercel.app/api/alunos';
 
-const form = document.getElementById("aluno-form");
-const btnGuardar = document.getElementById("btn-guardar");
-const btnAtualizar = document.getElementById("btn-atualizar");
-const tabela = document.querySelector("#tabela-alunos tbody");
+let alunos = [];
+let alunoAtualId = null;
 
-let idAtualizar = null;
+const tabelaBody = document.querySelector('#tabela-alunos tbody');
+const form = document.getElementById('aluno-form');
+const inputNome = document.getElementById('nome');
+const inputApelido = document.getElementById('apelido');
+const inputCurso = document.getElementById('curso');
+const inputAno = document.getElementById('anoCurricular');
+const btnGuardar = document.getElementById('btn-guardar');
+const btnAtualizar = document.getElementById('btn-atualizar');
 
-window.onload = () => {
-  carregarAlunos();
-  btnAtualizar.style.display = "none";
-};
-
-async function carregarAlunos() {
-  tabela.innerHTML = "";
-  const resposta = await fetch(`${API_URL}/alunos`);
-  const alunos = await resposta.json();
-
-  alunos.forEach(aluno => {
-    const linha = document.createElement("tr");
-    linha.innerHTML = `
-      <td>${aluno.nome}</td>
-      <td>${aluno.apelido}</td>
-      <td>${aluno.curso}</td>
-      <td>${aluno.anoCurricular}</td>
-      <td>
-        <button onclick="preencherFormulario('${aluno._id}')">Editar</button>
-        <button onclick="apagarAluno('${aluno._id}')">Apagar</button>
-      </td>
-    `;
-    tabela.appendChild(linha);
-  });
-}
-
-form.addEventListener("submit", async e => {
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const aluno = {
-    nome: form.nome.value,
-    apelido: form.apelido.value,
-    curso: form.curso.value,
-    anoCurricular: parseInt(form.anoCurricular.value)
+
+  const novoAluno = {
+    nome: inputNome.value,
+    apelido: inputApelido.value,
+    curso: inputCurso.value,
+    anoCurricular: Number(inputAno.value),
   };
 
-  if (idAtualizar) {
-    await fetch(`${API_URL}/alunos/${idAtualizar}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(aluno)
+  if (alunoAtualId) {
+    await fetch(`${API_URL}/${alunoAtualId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(novoAluno),
     });
-    idAtualizar = null;
-    btnAtualizar.style.display = "none";
-    btnGuardar.style.display = "inline";
+    alunoAtualId = null;
+    btnGuardar.style.display = 'inline-block';
+    btnAtualizar.style.display = 'none';
   } else {
-    await fetch(`${API_URL}/alunos`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(aluno)
+    await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(novoAluno),
     });
   }
 
@@ -63,23 +43,44 @@ form.addEventListener("submit", async e => {
   carregarAlunos();
 });
 
-async function preencherFormulario(id) {
-  const resposta = await fetch(`${API_URL}/alunos/${id}`);
-  const aluno = await resposta.json();
+async function carregarAlunos() {
+  const resposta = await fetch(API_URL);
+  alunos = await resposta.json();
 
-  form.nome.value = aluno.nome;
-  form.apelido.value = aluno.apelido;
-  form.curso.value = aluno.curso;
-  form.anoCurricular.value = aluno.anoCurricular;
-
-  idAtualizar = id;
-  btnGuardar.style.display = "none";
-  btnAtualizar.style.display = "inline";
-}
-
-async function apagarAluno(id) {
-  await fetch(`${API_URL}/alunos/${id}`, {
-    method: "DELETE"
+  tabelaBody.innerHTML = '';
+  alunos.forEach((aluno) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${aluno.nome}</td>
+      <td>${aluno.apelido}</td>
+      <td>${aluno.curso}</td>
+      <td>${aluno.anoCurricular}</td>
+      <td>
+        <button onclick="editarAluno('${aluno._id}')">Editar</button>
+        <button onclick="apagarAluno('${aluno._id}')">Apagar</button>
+      </td>
+    `;
+    tabelaBody.appendChild(tr);
   });
-  carregarAlunos();
 }
+
+window.editarAluno = function (id) {
+  const aluno = alunos.find((a) => a._id === id);
+  if (!aluno) return;
+
+  alunoAtualId = id;
+  inputNome.value = aluno.nome;
+  inputApelido.value = aluno.apelido;
+  inputCurso.value = aluno.curso;
+  inputAno.value = aluno.anoCurricular;
+
+  btnGuardar.style.display = 'none';
+  btnAtualizar.style.display = 'inline-block';
+};
+
+window.apagarAluno = async function (id) {
+  await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+  carregarAlunos();
+};
+
+carregarAlunos();
