@@ -1,4 +1,4 @@
-const baseURL = "https://trab1-restapi-martimd11-t4qs.onrender.com"; 
+const baseURL = "https://trab1-restapi-martimd11-t4qs.onrender.com/api/alunos"; 
 let alunoIdEditando = null;
 
 // Função aprimorada para carregar alunos
