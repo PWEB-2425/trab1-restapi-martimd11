@@ -1,104 +1,85 @@
-const baseURL = "https://trab1-restapi-martimd11-t4qs.onrender.com/api/alunos"; 
-let alunoIdEditando = null;
+const API_URL = "https://trab1-restapi-martimd11.onrender.com/api";
 
-// Função aprimorada para carregar alunos
+const form = document.getElementById("aluno-form");
+const btnGuardar = document.getElementById("btn-guardar");
+const btnAtualizar = document.getElementById("btn-atualizar");
+const tabela = document.querySelector("#tabela-alunos tbody");
+
+let idAtualizar = null;
+
+window.onload = () => {
+  carregarAlunos();
+  btnAtualizar.style.display = "none";
+};
+
 async function carregarAlunos() {
-  try {
-    const response = await fetch(baseURL);
-    if (!response.ok) throw new Error('Erro ao carregar alunos');
-    const alunos = await response.json();
-    
-    const lista = document.getElementById('lista-alunos');
-    lista.innerHTML = '';
-    
-    alunos.forEach(aluno => {
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <span class="aluno-info">
-          ${aluno.nome} ${aluno.apelido} - ${aluno.curso} (${aluno.anoCurricular}º ano)
-        </span>
-        <button class="btn-editar" onclick="editarAluno('${aluno._id}')">✏️ Editar</button>
-        <button class="btn-apagar" onclick="apagarAluno('${aluno._id}')">🗑️ Apagar</button>
-      `;
-      lista.appendChild(li);
-    });
-  } catch (error) {
-    console.error('Erro:', error);
-    alert('Falha ao carregar alunos. Verifique o console.');
-  }
+  tabela.innerHTML = "";
+  const resposta = await fetch(`${API_URL}/alunos`);
+  const alunos = await resposta.json();
+
+  alunos.forEach(aluno => {
+    const linha = document.createElement("tr");
+    linha.innerHTML = `
+      <td>${aluno.nome}</td>
+      <td>${aluno.apelido}</td>
+      <td>${aluno.curso}</td>
+      <td>${aluno.anoCurricular}</td>
+      <td>
+        <button onclick="preencherFormulario('${aluno._id}')">Editar</button>
+        <button onclick="apagarAluno('${aluno._id}')">Apagar</button>
+      </td>
+    `;
+    tabela.appendChild(linha);
+  });
 }
 
-// Função para editar aluno
-window.editarAluno = async function(id) {
-  try {
-    const response = await fetch(`${baseURL}/${id}`);
-    if (!response.ok) throw new Error('Erro ao buscar aluno');
-    
-    const aluno = await response.json();
-    alunoIdEditando = id;
-    
-    document.getElementById('nome').value = aluno.nome;
-    document.getElementById('apelido').value = aluno.apelido;
-    document.getElementById('curso').value = aluno.curso;
-    document.getElementById('ano').value = aluno.anoCurricular;
-    
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  } catch (error) {
-    console.error('Erro ao editar:', error);
-  }
-};
-
-// Função para apagar aluno
-window.apagarAluno = async function(id) {
-  if (!confirm('Tem certeza que deseja apagar este aluno?')) return;
-  
-  try {
-    const response = await fetch(`${baseURL}/${id}`, { method: 'DELETE' });
-    if (!response.ok) throw new Error('Erro ao apagar');
-    await carregarAlunos();
-  } catch (error) {
-    console.error('Erro ao apagar:', error);
-  }
-};
-
-// Formulário de submit
-document.getElementById('form-aluno').addEventListener('submit', async (e) => {
+form.addEventListener("submit", async e => {
   e.preventDefault();
-  
-  const alunoData = {
-    nome: document.getElementById('nome').value,
-    apelido: document.getElementById('apelido').value,
-    curso: document.getElementById('curso').value,
-    anoCurricular: parseInt(document.getElementById('ano').value)
+  const aluno = {
+    nome: form.nome.value,
+    apelido: form.apelido.value,
+    curso: form.curso.value,
+    anoCurricular: parseInt(form.anoCurricular.value)
   };
 
-  try {
-    if (alunoIdEditando) {
-      // Atualização
-      const response = await fetch(`${baseURL}/${alunoIdEditando}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(alunoData)
-      });
-      if (!response.ok) throw new Error('Erro ao atualizar');
-      alunoIdEditando = null;
-    } else {
-      // Criação
-      const response = await fetch(baseURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(alunoData)
-      });
-      if (!response.ok) throw new Error('Erro ao criar');
-    }
-    
-    document.getElementById('form-aluno').reset();
-    await carregarAlunos();
-  } catch (error) {
-    console.error('Erro no formulário:', error);
-    alert('Operação falhou! Verifique o console.');
+  if (idAtualizar) {
+    await fetch(`${API_URL}/alunos/${idAtualizar}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(aluno)
+    });
+    idAtualizar = null;
+    btnAtualizar.style.display = "none";
+    btnGuardar.style.display = "inline";
+  } else {
+    await fetch(`${API_URL}/alunos`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(aluno)
+    });
   }
+
+  form.reset();
+  carregarAlunos();
 });
 
-// Inicialização
-document.addEventListener('DOMContentLoaded', carregarAlunos);
+async function preencherFormulario(id) {
+  const resposta = await fetch(`${API_URL}/alunos/${id}`);
+  const aluno = await resposta.json();
+
+  form.nome.value = aluno.nome;
+  form.apelido.value = aluno.apelido;
+  form.curso.value = aluno.curso;
+  form.anoCurricular.value = aluno.anoCurricular;
+
+  idAtualizar = id;
+  btnGuardar.style.display = "none";
+  btnAtualizar.style.display = "inline";
+}
+
+async function apagarAluno(id) {
+  await fetch(`${API_URL}/alunos/${id}`, {
+    method: "DELETE"
+  });
+  carregarAlunos();
+}

@@ -5,26 +5,43 @@
   <title>Gestão de Alunos</title>
   <style>
     body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-    #lista-alunos { list-style: none; padding: 0; }
-    #lista-alunos li { padding: 10px; border-bottom: 1px solid #eee; }
-    button { margin-left: 10px; cursor: pointer; }
-    form { margin-top: 20px; padding: 20px; background: #f5f5f5; border-radius: 5px; }
-    input { padding: 8px; margin: 5px 0; width: 100%; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f5f5f5; }
+    form { margin-top: 20px; padding: 20px; background: #f9f9f9; border-radius: 5px; }
+    input { padding: 8px; margin: 5px 0; width: 100%; box-sizing: border-box; }
+    button { padding: 8px 12px; margin-top: 10px; }
   </style>
 </head>
 <body>
   <h1>Gestão de Alunos</h1>
-  <ul id="lista-alunos"></ul>
+
+  <table id="tabela-alunos">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Apelido</th>
+        <th>Curso</th>
+        <th>Ano Curricular</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Alunos serão carregados aqui -->
+    </tbody>
+  </table>
 
   <h2>Adicionar/Editar Aluno</h2>
-  <form id="form-aluno">
-    <input id="nome" placeholder="Nome" required>
-    <input id="apelido" placeholder="Apelido" required>
-    <input id="curso" placeholder="Curso" required>
-    <input id="ano" type="number" placeholder="Ano Curricular" min="1" required>
-    <button type="submit">Guardar</button>
+  <form id="aluno-form">
+    <input name="nome" id="nome" placeholder="Nome" required>
+    <input name="apelido" id="apelido" placeholder="Apelido" required>
+    <input name="curso" id="curso" placeholder="Curso" required>
+    <input name="anoCurricular" id="anoCurricular" type="number" placeholder="Ano Curricular" min="1" required>
+
+    <button type="submit" id="btn-guardar">Guardar</button>
+    <button type="submit" id="btn-atualizar" style="display:none;">Atualizar</button>
   </form>
 
-  <script src="app.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
