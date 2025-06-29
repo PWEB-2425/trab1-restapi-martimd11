@@ -6,13 +6,30 @@ const alunoRoutes = require('./routes/alunoRoutes');
 
 const app = express();
 
+
+const allowedOrigins = [
+  'https://trab1-restapi-martimd11-ezktrsbpn-martims-projects-c6b29c77.vercel.app',
+  'http://localhost:3000' // opcional, para testes locais
+];
+
+app.use(cors({
+  origin: function(origin, callback){
+    // permite requisições sem origem (como Postman)
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){
+      const msg = 'O CORS não permite acesso de: ' + origin;
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
+}));
+
 // Conexão MongoDB (Render)
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fallbackdb')
   .then(() => console.log('✅ Conectado ao MongoDB'))
   .catch(err => console.error('❌ Erro MongoDB:', err));
 
 // Middlewares
-app.use(cors());
 app.use(express.json());
 
 // Rotas
