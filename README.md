@@ -51,5 +51,7 @@ Este projeto consiste em um backend em **Node.js/Express** com conexão MongoDB,
 3. Crie um arquivo `.env` com a variável `MONGODB_URI` apontando para seu banco MongoDB
 
 link do render: https://trab1-restapi-martimd11-t4qs.onrender.com/api/alunos
-link do vercel: trab1-restapi-martimd11-martims-projects-c6b29c77.vercel.app
+
+
+link do vercel: https://trab1-restapi-martimd11-martims-projects-c6b29c77.vercel.app/
 

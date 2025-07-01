@@ -13,6 +13,7 @@ const allowedOrigins = [
 ];
 
 app.use(cors({ origin: true }));
+
 // Conexão MongoDB (Render)
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Ligação à base de dados com sucesso!'))
