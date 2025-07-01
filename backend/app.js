@@ -25,9 +25,9 @@ app.use(cors({
 }));
 
 // Conexão MongoDB (Render)
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fallbackdb')
-  .then(() => console.log('✅ Conectado ao MongoDB'))
-  .catch(err => console.error('❌ Erro MongoDB:', err));
+mongoose.connect(process.env.MONGODB_URI)
+    .then(() => console.log('Ligação à base de dados com sucesso!'))
+    .catch(err => console.log('Erro na ligação à base de dados:', err));
 
 // Middlewares
 app.use(express.json());
