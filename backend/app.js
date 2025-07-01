@@ -7,14 +7,21 @@ const alunoRoutes = require('./routes/alunoRoutes');
 const app = express();
 
 const allowedOrigins = [
-  'https://trab1-restapi-martimd11-nmiz0tsk9-martims-projects-c6b29c77.vercel.app', // CORRIGIDO: Adicionei essa origem que o erro aponta
-  'http://localhost:3000' // para testes locais
+  'https://trab1-restapi-martimd11-ezktrsbpn-martims-projects-c6b29c77.vercel.app',
+  'https://trab1-restapi-martimd11-nmiz0tsk9-martims-projects-c6b29c77.vercel.app',
+  'http://localhost:3000'
 ];
 
 app.use(cors({
-  origin: true
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); // permite Postman e outros sem origem
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('CORS bloqueado para: ' + origin), false);
+    }
+  }
 }));
-
 // Conexão MongoDB (Render)
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Ligação à base de dados com sucesso!'))
