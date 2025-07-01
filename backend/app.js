@@ -12,16 +12,7 @@ const allowedOrigins = [
   'http://localhost:3000'
 ];
 
-app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin) return callback(null, true); // permite Postman e outros sem origem
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      return callback(new Error('CORS bloqueado para: ' + origin), false);
-    }
-  }
-}));
+app.use(cors({ origin: true }));
 // Conexão MongoDB (Render)
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Ligação à base de dados com sucesso!'))
