@@ -33,7 +33,7 @@ Este projeto consiste em um backend em **Node.js/Express** com conexão MongoDB,
 
 - CRUD de alunos via API REST (`/api/alunos`)
 - Frontend que consome a API e exibe os alunos
-- Controle de acesso via CORS configurado para liberar apenas o domínio do frontend
+- Controle de acesso via CORS 
 
 ---
 
