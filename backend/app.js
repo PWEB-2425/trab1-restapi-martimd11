@@ -12,17 +12,7 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: function(origin, callback){
-    // permite requisições sem origem (como Postman)
-    if(!origin) return callback(null, true);
-
-    if(allowedOrigins.indexOf(origin) === -1){
-      const msg = 'O CORS não permite acesso de: ' + origin;
-      return callback(new Error(msg), false);
-    }
-
-    return callback(null, true);
-  }
+  origin: true
 }));
 
 // Conexão MongoDB (Render)
